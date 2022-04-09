@@ -8,3 +8,4 @@ __tests__/*.ts
 coverage
 *.zip
 package
+yarn-error.log
