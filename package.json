@@ -1,0 +1,32 @@
+{
+  "name": "@bits-cr/middy-joi-validator",
+  "version": "1.0.2",
+  "description": "Middy middleware validator using joi.dev",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": "https://github.com/bits-cr/middy-joi-validator",
+  "author": "bits-cr",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "prepublish": "tsc",
+    "publish": "npm publish",
+    "debug": "tsc -p tsconfig.json",
+    "test": "jest",
+    "test:check": "jest --coverage",
+    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand"
+  },
+  "devDependencies": {
+    "@middy/core": "^2.5.7",
+    "@types/aws-lambda": "^8.10.93",
+    "@types/jest": "^27.4.1",
+    "dotenv": "^16.0.0",
+    "jest": "^27.5.1",
+    "joi": "^17.6.0",
+    "ts-jest": "^27.1.4",
+    "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "@middy/util": "^2.5.7"
+  }
+}
