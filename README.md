@@ -10,12 +10,12 @@ To install middy-joi-validator:
 
 Using NPM:
 ```bash
-npm install --save joi
+npm install --save joi @bits-cr/middy-joi-validator
 ```
 
 Using yarn:
 ```bash
-yarn add joi
+yarn add joi @bits-cr/middy-joi-validator
 ```
 
 ## Documentation and examples
