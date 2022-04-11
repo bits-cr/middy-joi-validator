@@ -35,6 +35,9 @@ jobs:
     - name: Execute tests
       id: yarn-test
       run: yarn test
+    - name: Execute building
+      id: yarn-build
+      run: yarn build
     - name: Generate package
       id: yarn-pack
       run: yarn pack --filename bits-cr-middy-joi-validator.tgz

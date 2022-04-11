@@ -9,8 +9,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "prepublish": "tsc",
-    "publish": "npm publish",
+    "build": "tsc",
     "debug": "tsc -p tsconfig.json",
     "test": "jest",
     "test:check": "jest --coverage",
