@@ -4,6 +4,14 @@
   <p><strong>middy middleware validator using <a href="https://joi.dev/">joi.dev</a></strong></p>
 </div>
 
+<div align="center">
+  <p>
+    <a href="https://github.com/bits-cr/middy-joi-validator/actions/workflows/tests.yml">
+      <img src="https://github.com/bits-cr/middy-joi-validator/actions/workflows/tests.yml/badge.svg" alt="tests" style="max-width:100%;">
+    </a>
+  </p>
+</div>
+
 ## Install
 
 To install middy-joi-validator:
