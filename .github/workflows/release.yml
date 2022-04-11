@@ -39,8 +39,8 @@ jobs:
       id: yarn-pack
       run: yarn pack --filename bits-cr-middy-joi-validator.tgz
     - name: Publish to npmjs.org
-      id: publish-to-npm --new-version ${{ steps.vars.outputs.version }} bits-cr-middy-joi-validator.tgz
-      run: yarn publish
+      id: publish-to-npm
+      run: yarn publish --new-version ${{ steps.vars.outputs.version }} bits-cr-middy-joi-validator.tgz
       env:
        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     - name: Setup github npm registry
