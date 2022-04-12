@@ -30,7 +30,7 @@ const middleware = (opts: Options): middy.MiddlewareObj<APIGatewayProxyEvent, AP
         throw error;
       }
       if (preserveRawHeaders && !util.isDeepStrictEqual(value, request.event.headers)) {
-        request.event.rawHeaders = request.event.headers;
+        request.event.rawHeaders = { ...request.event.headers as any };
       }
       request.event.headers = value;
     }
@@ -44,7 +44,11 @@ const middleware = (opts: Options): middy.MiddlewareObj<APIGatewayProxyEvent, AP
         throw error;
       }
       if (preserveRawBody && !util.isDeepStrictEqual(value, request.event.body)) {
-        request.event.rawBody = request.event.body;
+        if (typeof request.event.body === 'string' || request.event.body instanceof (String)) {
+          request.event.rawBody = request.event.body.slice();
+        } else {
+          request.event.rawBody = { ...request.event.body as any };
+        }
       }
       request.event.body = value;
     }

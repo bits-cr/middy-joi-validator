@@ -10,7 +10,7 @@ describe('Middy Joi Validator | inputSchema tests', () => {
     let rawBody = {} as any;
     // given
     const inputSchema = Joi.object({
-      name: Joi.string().required(),
+      name: Joi.string().lowercase().required(),
       age: Joi.number().required()
     });
     const handler = middy(async event => {
@@ -31,11 +31,71 @@ describe('Middy Joi Validator | inputSchema tests', () => {
         age: 5
       }
     }
-    const response = await handler(event, mockLambdaContext);
+    const response = await handler({ ...event }, mockLambdaContext);
 
     // then
-    expect(response).toEqual(event.body);
+    expect(response).toEqual({ ...event.body, name: 'amelia' });
     expect(rawBody).toBeUndefined();
+  });
+
+  it('should validate the input string with input schema', async () => {
+    let rawBody = {} as any;
+    // given
+    const inputSchema = Joi.string().max(10).truncate().lowercase().required();
+    const handler = middy(async event => {
+      rawBody = event.rawBody;
+      return event.body // propagates the body as a response
+    });
+    handler.use(
+      validatorMiddleware({
+        inputSchema: inputSchema,
+        preserveRawBody: true
+      })
+    );
+
+    // when
+    // input is valid
+    const event = {
+      body: 'Hello World'
+    }
+    const response = await handler({ ...event }, mockLambdaContext);
+
+    // then
+    expect(response).toEqual('hello worl');
+    expect(rawBody).toEqual(event.body);
+  });
+
+  it('should validate the input object with input schema and store original body as rawBody', async () => {
+    let rawBody = {} as any;
+    // given
+    const inputSchema = Joi.object({
+      name: Joi.string().lowercase().required(),
+      age: Joi.number().required()
+    });
+    const handler = middy(async event => {
+      rawBody = event.rawBody;
+      return event.body // propagates the body as a response
+    });
+    handler.use(
+      validatorMiddleware({
+        inputSchema: inputSchema,
+        preserveRawBody: true
+      })
+    );
+
+    // when
+    // input is valid
+    const event = {
+      body: {
+        name: 'Amelia',
+        age: 5
+      }
+    }
+    const response = await handler({ ...event }, mockLambdaContext);
+
+    // then
+    expect(response).toEqual({ ...event.body, name: 'amelia' });
+    expect(rawBody).toEqual(event.body);
   });
 
   it('should return an exception if input is invalid', async () => {

@@ -1,6 +1,6 @@
 declare namespace AWSLambda {
   export interface APIGatewayProxyEvent {
-    body: string | null;
+    body: string | object | null;
     headers: APIGatewayProxyEventHeaders;
     multiValueHeaders: APIGatewayProxyEventMultiValueHeaders;
     httpMethod: string;
@@ -12,7 +12,7 @@ declare namespace AWSLambda {
     stageVariables: APIGatewayProxyEventStageVariables | null;
     requestContext: APIGatewayEventRequestContextWithAuthorizer<TAuthorizerContext>;
     resource: string;
-    rawBody: string | null;
-    rawHeaders: string | null;
+    rawBody: string | object | null;
+    rawHeaders: APIGatewayProxyEventHeaders | null;
   }
 }

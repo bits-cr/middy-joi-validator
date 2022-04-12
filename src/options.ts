@@ -1,7 +1,7 @@
 import Joi, { ValidationOptions } from 'joi';
 
 export interface Options {
-  inputSchema?: Joi.ObjectSchema | undefined;
+  inputSchema?: Joi.AnySchema | undefined;
   inputValidationOptions?: ValidationOptions | undefined;
   preserveRawBody?: boolean | undefined;
   inputErrorValidationMessage?: string | undefined;
