@@ -2,9 +2,9 @@ name: Create new release
 
 on:
   push:
-    # Sequence of patterns matched against refs/tags
-    tags:
-    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+    branches:
+    - 'main'
+    - 'beta'
 
 jobs:
   release:
@@ -15,20 +15,6 @@ jobs:
     - name: Checkout repo
       id: checkout
       uses: actions/checkout@v3
-    - name: Setting version number
-      id: vars
-      run: |
-        echo ::set-output name=version::$(echo $GITHUB_REF | sed -rn "s/^refs\/tags\/v([0-9]+\.[0-9]+\.[0-9]+)$/\1/p")
-    - name: Check version
-      if: ${{ steps.vars.outputs.version == '' }}
-      run: |
-        echo Error getting release version
-        exit 1
-    - name: Prepare git user
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        yarn config set version-git-tag true
     - name: Use Node.js
       id: use-nodejs
       uses: actions/setup-node@v3
@@ -41,15 +27,29 @@ jobs:
     - name: Execute tests
       id: yarn-test
       run: yarn test
+    - name: Prepare git user
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+    - name: Create new version
+      run: |
+        yarn config set version-git-tag true
+        yarn version --patch
     - name: Execute building
       id: yarn-build
       run: yarn build
     - name: Generate package
       id: yarn-pack
       run: yarn pack --filename bits-cr-middy-joi-validator.tgz
+    - name: Upload package to artifacts
+      id: upload-tgz-artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: bits-cr-middy-joi-validator.tgz
+        path: bits-cr-middy-joi-validator.tgz
     - name: Publish to npmjs.org
       id: publish-to-npm
-      run: yarn publish --new-version ${{ steps.vars.outputs.version }} bits-cr-middy-joi-validator.tgz
+      run: yarn publish bits-cr-middy-joi-validator.tgz
       env:
        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     - name: Setup github npm registry
@@ -59,18 +59,10 @@ jobs:
         registry-url: 'https://npm.pkg.github.com'
     - name: Publish to npm.pkg.github.com
       id: publish-to-npm-github
-      run: yarn publish --new-version ${{ steps.vars.outputs.version }} bits-cr-middy-joi-validator.tgz
+      run: yarn publish bits-cr-middy-joi-validator.tgz
       env:
         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Upload package to artifacts
-      id: upload-tgz-artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: bits-cr-middy-joi-validator.tgz
-        path: bits-cr-middy-joi-validator.tgz
-    - name: Release
-      id: create-release
-      uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        files: bits-cr-middy-joi-validator.tgz
+    - name: Push changes and release tag
+      run: |
+        git push origin
+        git push origin --tags
