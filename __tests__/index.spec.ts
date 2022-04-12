@@ -164,3 +164,115 @@ describe('Middy Joi Validator | outputSchema tests', () => {
     await expect(handler(event, mockLambdaContext)).rejects.toThrow(outputErrorMessage);
   });
 });
+
+describe('Middy Joi Validator | headersSchema tests', () => {
+  it('should validate the headers object and convert values according to joi headers schema', async () => {
+    // given
+    const headersSchema = Joi.object({
+      'Content-Type': Joi.string().lowercase().valid('application/json', 'application/xml').required()
+    });
+    const handler = middy(async event => {
+      return event.headers; // propagates the headers as the response
+    });
+    handler.use(
+      validatorMiddleware({
+        headersSchema: headersSchema
+      })
+    );
+
+    // when
+    const event = {
+      headers: {
+        'User-Agent': 'Jest/Tests',
+        'Content-Type': 'APPLICATION/JSON',
+      }
+    }
+    const response = await handler(event, mockLambdaContext);
+
+    // then
+    expect(response['Content-Type']).toEqual('application/json');
+  });
+
+  it('should return an error message if joi allowUnknown option is false for headers', async () => {
+    // given
+    const headersSchema = Joi.object({
+      'Content-Type': Joi.string().lowercase().valid('application/json', 'application/xml').required()
+    });
+    const handler = middy(async event => {
+      return event.headers; // propagates the headers as the response
+    });
+    handler.use(
+      validatorMiddleware({
+        headersSchema: headersSchema,
+        headersValidationOptions: {
+          allowUnknown: false
+        }
+      })
+    );
+
+    // when
+    const event = {
+      headers: {
+        'User-Agent': 'Jest/Tests',
+        'Content-Type': 'APPLICATION/JSON',
+      }
+    }
+
+    // then
+    await expect(handler(event, mockLambdaContext)).rejects.toThrow('Header: "User-Agent" is not allowed');
+  });
+
+  it('should return an error message if joi schema validation fails', async () => {
+    // given
+    const headersSchema = Joi.object({
+      'Content-Type': Joi.string().lowercase().valid('application/json', 'application/xml').required()
+    });
+    const handler = middy(async event => {
+      return event.headers; // propagates the headers as the response
+    });
+    handler.use(
+      validatorMiddleware({
+        headersSchema: headersSchema,
+      })
+    );
+
+    // when
+    const event = {
+      headers: {
+        'User-Agent': 'Jest/Tests',
+        'Content-Type': 'TEXT/PLAIN',
+      }
+    }
+
+    // then
+    await expect(handler(event, mockLambdaContext)).rejects.toThrow('Header: "Content-Type" must be one of [application/json, application/xml]');
+  });
+
+  it('should return an custom error message if joi schema validation fails', async () => {
+    // given
+    const headersErrorMessage = 'Invalid header value';
+    const headersSchema = Joi.object({
+      'Content-Type': Joi.string().lowercase().valid('application/json', 'application/xml').required()
+    });
+    const handler = middy(async event => {
+      return event.headers; // propagates the headers as the response
+    });
+    handler.use(
+      validatorMiddleware({
+        headersSchema: headersSchema,
+        headersErrorValidationMessage: headersErrorMessage
+      })
+    );
+
+    // when
+    const event = {
+      headers: {
+        'User-Agent': 'Jest/Tests',
+        'Content-Type': 'TEXT/PLAIN',
+      }
+    }
+
+    // then
+    await expect(handler(event, mockLambdaContext)).rejects.toThrow(headersErrorMessage);
+  });
+});
