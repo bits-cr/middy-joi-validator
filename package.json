@@ -7,6 +7,16 @@
   "repository": "https://github.com/bits-cr/middy-joi-validator",
   "author": "bits-cr",
   "license": "MIT",
+  "keywords": [
+    "middy",
+    "middleware",
+    "serverless",
+    "framework",
+    "AWS Lambda",
+    "validator",
+    "joi",
+    "schema"
+  ],
   "private": false,
   "scripts": {
     "build": "tsc",
