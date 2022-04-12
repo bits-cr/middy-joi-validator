@@ -7,12 +7,14 @@ import validatorMiddleware from '../src/index';
 
 describe('Middy Joi Validator | inputSchema tests', () => {
   it('should validate the input object with input schema', async () => {
+    let rawBody = {} as any;
     // given
     const inputSchema = Joi.object({
       name: Joi.string().required(),
       age: Joi.number().required()
     });
     const handler = middy(async event => {
+      rawBody = event.rawBody;
       return event.body // propagates the body as a response
     });
     handler.use(
@@ -33,6 +35,7 @@ describe('Middy Joi Validator | inputSchema tests', () => {
 
     // then
     expect(response).toEqual(event.body);
+    expect(rawBody).toBeUndefined();
   });
 
   it('should return an exception if input is invalid', async () => {
@@ -167,16 +170,19 @@ describe('Middy Joi Validator | outputSchema tests', () => {
 
 describe('Middy Joi Validator | headersSchema tests', () => {
   it('should validate the headers object and convert values according to joi headers schema', async () => {
+    let rawHeaders = {} as any;
     // given
     const headersSchema = Joi.object({
       'Content-Type': Joi.string().lowercase().valid('application/json', 'application/xml').required()
     });
     const handler = middy(async event => {
+      rawHeaders = event.rawHeaders;
       return event.headers; // propagates the headers as the response
     });
     handler.use(
       validatorMiddleware({
-        headersSchema: headersSchema
+        headersSchema: headersSchema,
+        preserveRawHeaders: true
       })
     );
 
@@ -191,6 +197,8 @@ describe('Middy Joi Validator | headersSchema tests', () => {
 
     // then
     expect(response['Content-Type']).toEqual('application/json');
+    expect(response['User-Agent']).toEqual('Jest/Tests');
+    expect(rawHeaders['Content-Type']).toEqual('APPLICATION/JSON'); // raw headers are not modified
   });
 
   it('should return an error message if joi allowUnknown option is false for headers', async () => {

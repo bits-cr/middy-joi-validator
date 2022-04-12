@@ -1,15 +1,18 @@
 import middy from '@middy/core';
 import { createError } from '@middy/util';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import util from 'util';
 import Options, { defaultOptions } from './options';
 
 const middleware = (opts: Options): middy.MiddlewareObj<APIGatewayProxyEvent, APIGatewayProxyResult> => {
   let {
     inputSchema,
     inputValidationOptions,
+    preserveRawBody,
     inputErrorValidationMessage,
     headersSchema,
     headersValidationOptions,
+    preserveRawHeaders,
     headersErrorValidationMessage,
     outputSchema,
     outputValidationOptions,
@@ -26,10 +29,13 @@ const middleware = (opts: Options): middy.MiddlewareObj<APIGatewayProxyEvent, AP
         error.details = errorDetails;
         throw error;
       }
+      if (preserveRawHeaders && !util.isDeepStrictEqual(value, request.event.headers)) {
+        request.event.rawHeaders = request.event.headers;
+      }
       request.event.headers = value;
     }
     if (inputSchema) {
-      const { error: validationError } = inputSchema.validate(request.event.body, inputValidationOptions);
+      const { error: validationError, value } = inputSchema.validate(request.event.body, inputValidationOptions);
       if (validationError) {
         // Bad Request
         const error = createError(400, inputErrorValidationMessage ? inputErrorValidationMessage : validationError.message);
@@ -37,6 +43,10 @@ const middleware = (opts: Options): middy.MiddlewareObj<APIGatewayProxyEvent, AP
         error.details = errorDetails;
         throw error;
       }
+      if (preserveRawBody && !util.isDeepStrictEqual(value, request.event.body)) {
+        request.event.rawBody = request.event.body;
+      }
+      request.event.body = value;
     }
   };
 
