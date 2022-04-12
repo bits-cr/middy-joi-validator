@@ -24,6 +24,10 @@ jobs:
       run: |
         echo Error getting release version
         exit 1
+    - name: Prepare git user
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
     - name: Use Node.js
       id: use-nodejs
       uses: actions/setup-node@v3
