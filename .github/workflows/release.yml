@@ -19,6 +19,8 @@ jobs:
     - name: Checkout repo
       id: checkout
       uses: actions/checkout@v3
+      with:
+        ssh-key: ${{ secrets.BOT_SSH_KEY }}
     - name: Install dependencies
       id: install-dependencies
       run: yarn install --frozen-lockfile
