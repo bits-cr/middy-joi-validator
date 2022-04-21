@@ -26,6 +26,19 @@ Using yarn:
 yarn add joi @bits-cr/middy-joi-validator
 ```
 
+## Options
+- inputSchema (Joi.AnySchema object) (optional): The Joi schema object that will be used to validate the input body (request.event.body) of the Lambda handler.
+- inputValidationOptions (ValidationOptions 'joi') (optional): This can be used to override the options for the joi any.validate method for the input schema. More info: [joi.dev - any.validate(value, [options]) ](https://joi.dev/api/?v=latest#anyvalidatevalue-options). `Defaults: Joi defaults options`
+- preserveRawBody (boolean) (optional): This can be used to preserve the original input body at `event.rawBody`. `Defaults: false`
+- inputErrorValidationMessage (string) (optional): This can be used to replace the error message in case of an input schema validation error.
+- headersSchema (Joi.AnySchema object) (optional): The Joi schema object that will be used to validate the input headers (request.event.headers) of the Lambda handler.
+- headersValidationOptions (ValidationOptions 'joi') (optional): This can be used to override the options for the joi any.validate method for the headers schema. More info: [joi.dev - any.validate(value, [options]) ](https://joi.dev/api/?v=latest#anyvalidatevalue-options). `Defaults: { allowUnknown: true }`
+- preserveRawHeaders (boolean) (optional): This can be used to preserve the original input headers at `event.rawHeaders`. `Defaults: false`
+- headersErrorValidationMessage (string) (optional): This can be used to replace the error message in case of an headers schema validation error.
+- outputSchema (Joi.AnySchema object) (optional): The Joi schema object that will be used to validate the output (request.response) of the Lambda handler
+- outputValidationOptions (ValidationOptions 'joi') (optional): This can be used to override the options for the joi any.validate method for the input schema. More info: [joi.dev - any.validate(value, [options]) ](https://joi.dev/api/?v=latest#anyvalidatevalue-options). `Defaults: Joi defaults options`
+- outputErrorValidationMessage (string) (optional): This can be used to replace the error message in case of an output schema validation error.
+
 ## Documentation and examples
 ```javascript
 //# handler.js #
