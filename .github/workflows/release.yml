@@ -19,6 +19,15 @@ jobs:
     - name: Checkout repo
       id: checkout
       uses: actions/checkout@v3
+    - name: Install dependencies
+      id: install-dependencies
+      run: yarn install --frozen-lockfile
+    - name: Execute tests
+      id: yarn-test
+      run: yarn test
+    - name: Build app
+      id: yarn-build
+      run: yarn build
     - name: Import GPG key for bot
       id: bot-signing-key
       uses: crazy-max/ghaction-import-gpg@v4
