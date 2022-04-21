@@ -25,7 +25,7 @@ jobs:
       with:
         gpg_private_key: ${{ secrets.BOT_GPG_SIGNING_KEY }}
         passphrase: ${{ secrets.BOT_GPG_PASSPHRASE }}
-        fingerprint: "F0637CD9BCDAACC51D7976F3071E232FF33B2800"
+        fingerprint: ${{ secrets.BOT_GPG_FINGERPRINT }}
     - name: Prepare git user for bot
       run: |
         git config --global user.name "arce-bot"
