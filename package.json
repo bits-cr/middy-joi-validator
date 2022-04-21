@@ -1,6 +1,6 @@
 {
   "name": "@bits-cr/middy-joi-validator",
-  "version": "1.0.14-beta.5",
+  "version": "1.0.14-beta.6",
   "description": "Middy middleware validator using joi.dev",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
